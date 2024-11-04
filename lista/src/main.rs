@@ -192,6 +192,77 @@ fn contar_ocorrencias(texto: &str, palavra: &str) -> usize {
     cont
 }
 
+// Exercício 21: Verificar Anagrama
+/// Recebe duas strings e retorna `true` se uma for um anagrama da outra,
+/// ignorando espaços e diferenças de maiúsculas e minúsculas.
+fn verificar_anagrama(s1: &str, s2: &str) -> bool {
+    let mut letras_s1: Vec<char> = s1.to_lowercase().chars().filter(|c| !c.is_whitespace()).collect();
+    let mut letras_s2: Vec<char> = s2.to_lowercase().chars().filter(|c| !c.is_whitespace()).collect();
+    letras_s1.sort_unstable();
+    letras_s2.sort_unstable();
+    letras_s1 == letras_s2
+}
+
+// Exercício 22: Filtro de Números Pares e Ímpares
+/// Recebe um vetor de inteiros e retorna uma tupla de dois vetores:
+/// o primeiro com todos os números pares e o segundo com os ímpares.
+fn separar_pares_impares(vetor: Vec<i32>) -> (Vec<i32>, Vec<i32>) {
+    let mut vetor_par: Vec<i32> = vec![];
+    let mut vetor_impar: Vec<i32> = vec![];
+    for n in vetor{
+        if n % 2 == 0{
+            vetor_par.push(n);
+        }
+        else{
+            vetor_impar.push(n);
+        }
+    }
+    (vetor_par, vetor_impar)
+}
+
+// Exercício 23: Encontrar Duplicatas
+/// Recebe um vetor de inteiros e retorna um vetor contendo apenas
+/// os números que aparecem mais de uma vez, sem repetição.
+fn encontrar_duplicatas(mut vetor: Vec<i32>) -> Vec<i32> {
+    let mut repet = vec![];
+    let mut n0 = vetor[0];
+    vetor.sort();
+    for n in 1..vetor.len(){
+        if vetor[n] == n0{
+            repet.push(vetor[n]);
+        }
+        n0 = vetor[n];
+    }
+    repet.dedup();
+    repet
+}
+
+// Exercício 24: Remover Elementos Repetidos Consecutivos
+/// Recebe uma string e retorna uma nova string onde caracteres consecutivos idênticos
+/// foram reduzidos a um único caractere.
+fn remover_consecutivos(s: &str) -> String {
+    let mut asiic: Vec<u32> = s.chars().map(|c| c as u32  ).collect();
+    asiic.dedup();
+    let string: String = asiic.iter().map(|c| *c as u8 as char).collect();
+    string
+}
+
+// Exercício 25: Alternar Entre Maiúsculas e Minúsculas
+/// Recebe uma string e retorna uma nova string onde cada caractere
+/// é alternado entre maiúsculo e minúsculo, começando com maiúscula.
+fn alternar_maiusculas_minusculas(s: &str) -> String {
+    let mut frase: String = String::new();
+    for (k, v) in s.chars().enumerate(){
+        if k % 2 == 0{
+            frase.push(v.to_ascii_uppercase());
+        }
+        else {
+            frase.push(v.to_ascii_lowercase());            
+        }
+    }
+    frase
+}
+
 
 // Testes para todas as funções
 #[cfg(test)]
@@ -325,6 +396,47 @@ mod tests {
         assert_eq!(contar_ocorrencias("Rust é divertido", "é"), 1);
         assert_eq!(contar_ocorrencias("Rust é legal, Rust é rápido", "Rust"), 2);
         assert_eq!(contar_ocorrencias("Rust é legal", "C++"), 0);
+    }
+
+    #[test]
+    fn test_verificar_anagrama() {
+        assert!(verificar_anagrama("amor", "Roma"));
+        assert!(verificar_anagrama("eleven plus two", "twelve plus one"));
+        assert!(!verificar_anagrama("Rust", "Trust"));
+    }
+
+    #[test]
+    fn test_separar_pares_impares() {
+        let (pares, impares) = separar_pares_impares(vec![1, 2, 3, 4, 5, 6]);
+        assert_eq!(pares, vec![2, 4, 6]);
+        assert_eq!(impares, vec![1, 3, 5]);
+
+        let (pares, impares) = separar_pares_impares(vec![0, 11, 22, 33]);
+        assert_eq!(pares, vec![0, 22]);
+        assert_eq!(impares, vec![11, 33]);
+    }
+
+    #[test]
+    fn test_encontrar_duplicatas() {
+        assert_eq!(encontrar_duplicatas(vec![1, 2, 2, 3, 4, 4, 5]), vec![2, 4]);
+        assert_eq!(encontrar_duplicatas(vec![1, 1, 1, 2, 2]), vec![1, 2]);
+        assert_eq!(encontrar_duplicatas(vec![1, 2, 3]), vec![]);
+    }
+
+    #[test]
+    fn test_remover_consecutivos() {
+        assert_eq!(remover_consecutivos("aaabbcddd"), "abcd");
+        assert_eq!(remover_consecutivos("Rusttt"), "Rust");
+        assert_eq!(remover_consecutivos("a"), "a");
+        assert_eq!(remover_consecutivos(""), "");
+    }
+
+    #[test]
+    fn test_alternar_maiusculas_minusculas() {
+        assert_eq!(alternar_maiusculas_minusculas("rust"), "RuSt");
+        assert_eq!(alternar_maiusculas_minusculas("alternating"), "AlTeRnAtInG");
+        assert_eq!(alternar_maiusculas_minusculas("RUST"), "RuSt");
+        assert_eq!(alternar_maiusculas_minusculas(""), "");
     }
 }
 fn main(){
